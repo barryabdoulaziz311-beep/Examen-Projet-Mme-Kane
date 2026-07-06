@@ -166,17 +166,23 @@ section p {
     line-height: 1.6;
 }
 
-form .mdp_oublie {
+.mdp_oublie {
     display: flex;
     justify-content: center;
     margin-top: 10px;
     gap: 10px;
 }
 
-form .mdp_oublie a {
-    text-decoration: none;
+.mdp_oublie label {
+    font-size: 0.6rem;
+    display: flex;
+}
+
+.mdp_oublie a {
     color: #1158e6;
-    font-weight: bold;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 0.8rem;
 }
 
 form .mdp_oublie a:hover {
@@ -249,7 +255,6 @@ select:focus {
 }
 
 
-
 footer {
     display: flex;
     flex-direction: row;
@@ -305,6 +310,14 @@ footer .zone-marque .nom-marque {
         display: flex;
         flex-direction: row;
         border-bottom: none;
+    }
+
+    .mdp_oublie label {
+        font-size: 1.2rem;
+    }
+
+    .mdp_oublie a {
+        font-size: 1.2rem;
     }
 
     .nav a {
