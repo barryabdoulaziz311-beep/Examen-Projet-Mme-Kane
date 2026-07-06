@@ -1,0 +1,573 @@
+Bon voilà j'ai ce code dans le fichier .txt et  je dois ajouter une option audio (l'utilisateur peut entrer du texte et audio).
+
+S'il le veut, il écrit du texte et s'il le veut il appui sur une icone audio pour parler.
+Une affichage séquentielle. Il écrit ça apparait dans le champ et parle, ça apparaît juste en du texte. Il écrit ou parle de nouveau, en bas de l'audio et parle en bas du texte... etc
+
+
+
+
+
+
+C'est une excellente idée de fonctionnalité ! Permettre d'alterner du texte et de l'audio de manière séquentielle rendra ton application beaucoup plus puissante, un peu à la manière de Notion.
+Cependant, je dois être transparent avec toi sur la réalité technique : **tu ne peux pas simplement insérer un composant audio interactif (avec un bouton Play/Pause) directement à l'intérieur d'un seul RichTextEditor.** Actuellement, ton modèle de données stocke le contenu sous forme d'une chaîne de caractères HTML unique, et tu utilises la librairie mohamedrejeb.richeditor pour la gestion du texte. Bien que cette librairie soit parfaite pour le formatage du texte, elle ne gère pas nativement l'insertion de composants UI complexes (comme un lecteur audio) au milieu du flux de texte.
+Pour réaliser ton affichage séquentiel (Texte ➡️ Audio ➡️ Texte ➡️ Audio), tu dois faire évoluer ton application vers une **architecture en blocs**. Voici comment structurer cette modification.
+### 1. Modifier le Modèle de Données (Architecture en Blocs)
+Au lieu d'avoir un seul champ contenu en HTML, ta note doit désormais contenir une liste d'éléments (des blocs).
+```kotlin
+// Représentation des différents types de blocs
+sealed class BlocNote {
+    data class Texte(var contenuHtml: String) : BlocNote()
+    data class Audio(val cheminFichier: String, val duree: String = "") : BlocNote()
+}
+
+// Mise à jour de ta classe Note
+data class Note (
+    @SerializedName("id") val id : Int = 0,
+    @SerializedName("titre") val titre : String,
+    // On remplace le String par une liste de blocs
+    @SerializedName("blocs") val blocs: List<BlocNote> = listOf(BlocNote.Texte("")), 
+    @SerializedName("dateCreation") val dateCreation: String,
+    @SerializedName("dateDernierModif") var dateDernierModif: String,
+    @SerializedName("estFavori") var estFavori: Boolean = false,
+    @SerializedName("estVerrouille") var estVerrouille : Boolean = false
+)
+
+```
+### 2. Adapter l'Interface Utilisateur (Saisie et Édition)
+Dans ta fonction RichTextNoteEditorScreen, tu ne dois plus utiliser un seul ZoneTexteEnrichi qui prend tout l'espace. Tu dois utiliser une LazyColumn qui va afficher chaque bloc l'un en dessous de l'autre.
+```kotlin
+@Composable
+fun ContenuSequentiel(blocs: MutableList<BlocNote>) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        itemsIndexed(blocs) { index, bloc ->
+            when (bloc) {
+                is BlocNote.Texte -> {
+                    // Chaque bloc de texte a son propre RichTextState
+                    val state = rememberRichTextState()
+                    LaunchedEffect(bloc.contenuHtml) {
+                        if (state.toHtml() != bloc.contenuHtml) {
+                            state.setHtml(bloc.contenuHtml)
+                        }
+                    }
+                    ZoneTexteEnrichi(
+                        state = state,
+                        placeholder = "Écrivez ici...",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                is BlocNote.Audio -> {
+                    // Composant visuel pour l'audio
+                    LecteurAudioUI(cheminFichier = bloc.cheminFichier)
+                }
+            }
+        }
+    }
+}
+
+```
+### 3. La Logique d'Ajout (Texte ➡️ Audio ➡️ Texte)
+Dans ta BarreOutilsEdition, tu devras ajouter un bouton Micro. Voici la logique séquentielle qui doit s'exécuter quand l'utilisateur clique dessus :
+ 1. **Sauvegarder l'état actuel :** Récupérer le HTML du bloc de texte en cours de frappe.
+ 2. **Enregistrer l'audio :** Lancer l'enregistrement via le MediaRecorder d'Android.
+ 3. **Créer les nouveaux blocs :** Une fois l'enregistrement terminé, tu ajoutes à ta liste de blocs :
+   * Un BlocNote.Audio avec le chemin du fichier enregistré.
+   * Un nouveau BlocNote.Texte vide juste en dessous pour que l'utilisateur puisse continuer à écrire.
+### 4. Ce qu'il te manque pour gérer l'Audio sous Android
+Pour implémenter la partie purement technique de l'audio, tu auras besoin de configurer les éléments suivants dans ton projet :
+ * **Les Permissions :** Tu dois ajouter <uses-permission android:name="android.permission.RECORD_AUDIO" /> dans ton AndroidManifest.xml et demander cette permission à l'utilisateur au moment où il clique sur l'icône micro.
+ * **L'Enregistrement (MediaRecorder) :** C'est la classe Android native qui te permettra de capturer la voix de l'utilisateur et de la sauvegarder dans un fichier .m4a ou .3gp dans le stockage interne de ton application.
+ * **La Lecture (MediaPlayer) :** C'est la classe qui te permettra de lire le fichier audio quand l'utilisateur cliquera sur le bouton "Play" du bloc audio.
+**En résumé :** Ton code actuel est très bien structuré pour du texte simple, mais pour un affichage séquentiel, tu dois impérativement abandonner le "tout HTML" au profit d'une liste d'objets (List<BlocNote>) rendue dynamiquement.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Tu donnes le code nécessaire pour l'audio.
+
+
+
+
+C'est parti. Gérer l'audio sous Android demande un peu de rigueur, notamment à cause des permissions et de la gestion du matériel (micro et haut-parleurs).
+En tant qu'IA, je peux te fournir les briques exactes dont tu as besoin pour faire fonctionner cela. Voici le code concret, divisé en étapes logiques, pour enregistrer et lire de l'audio dans ton application.
+### 1. Déclarer la permission dans le Manifest
+Avant toute chose, Android doit savoir que ton application utilise le microphone. Ouvre ton fichier AndroidManifest.xml et ajoute cette ligne juste avant la balise <application> :
+```xml
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+```
+### 2. Le Gestionnaire d'Enregistrement (MediaRecorder)
+Crée une nouvelle classe Kotlin (par exemple EnregistreurAudio.kt). Elle va encapsuler la logique un peu lourde du MediaRecorder. Nous allons sauvegarder les fichiers directement dans le dossier privé de ton application (filesDir), pour qu'ils soient persistants avec tes notes.
+```kotlin
+import android.content.Context
+import android.media.MediaRecorder
+import android.os.Build
+import java.io.File
+import java.io.IOException
+
+class EnregistreurAudio(private val context: Context) {
+
+    private var recorder: MediaRecorder? = null
+    private var cheminFichierActuel: String? = null
+
+    // Démarre l'enregistrement et retourne le chemin du fichier créé
+    fun demarrerEnregistrement(): String? {
+        // Crée un nom de fichier unique basé sur l'heure
+        val nomFichier = "audio_note_${System.currentTimeMillis()}.m4a"
+        val fichier = File(context.filesDir, nomFichier)
+        cheminFichierActuel = fichier.absolutePath
+
+        // Initialisation compatible avec les différentes versions d'Android
+        recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MediaRecorder(context)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaRecorder()
+        }.apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setOutputFile(cheminFichierActuel)
+
+            try {
+                prepare()
+                start()
+            } catch (e: IOException) {
+                e.printStackTrace()
+                return null
+            }
+        }
+        return cheminFichierActuel
+    }
+
+    fun arreterEnregistrement() {
+        recorder?.apply {
+            try {
+                stop()
+                release()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        recorder = null
+    }
+}
+
+```
+### 3. Le Gestionnaire de Lecture (MediaPlayer)
+Crée une autre classe (ou mets-la dans le même fichier) pour gérer la lecture des audios enregistrés.
+```kotlin
+import android.media.MediaPlayer
+import java.io.IOException
+
+class LecteurAudio {
+
+    private var player: MediaPlayer? = null
+    var estEnLecture = false
+        private set
+
+    fun lire(cheminFichier: String, onLectureTerminee: () -> Unit) {
+        player = MediaPlayer().apply {
+            try {
+                setDataSource(cheminFichier)
+                prepare()
+                start()
+                estEnLecture = true
+                
+                // Quand l'audio est fini, on met à jour l'état
+                setOnCompletionListener {
+                    estEnLecture = false
+                    onLectureTerminee()
+                    release()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun arreter() {
+        player?.apply {
+            if (isPlaying) {
+                stop()
+            }
+            release()
+        }
+        player = null
+        estEnLecture = false
+    }
+}
+
+```
+### 4. Le Composant UI pour l'Audio (Jetpack Compose)
+Voici le composant visuel (LecteurAudioUI) que tu vas insérer dans ta liste de blocs pour afficher un fichier audio. Il gère son propre bouton Play/Stop.
+```kotlin
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun LecteurAudioUI(cheminFichier: String) {
+    // Instance du lecteur conservée pour ce composant
+    val lecteur = remember { LecteurAudio() }
+    var enLecture by remember { mutableStateOf(false) }
+
+    // Nettoyage si le composant quitte l'écran
+    DisposableEffect(Unit) {
+        onDispose {
+            lecteur.arreter()
+        }
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    if (enLecture) {
+                        lecteur.arreter()
+                        enLecture = false
+                    } else {
+                        lecteur.lire(cheminFichier) {
+                            enLecture = false // Callback quand c'est fini
+                        }
+                        enLecture = true
+                    }
+                },
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
+                    .size(48.dp)
+            ) {
+                Icon(
+                    imageVector = if (enLecture) Icons.Default.Stop else Icons.Default.PlayArrow,
+                    contentDescription = if (enLecture) "Arrêter" else "Lire",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Text(
+                text = "Note Vocale",
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+```
+### 5. Demander la permission et Enregistrer (Intégration)
+Dans ton écran d'édition (RichTextNoteEditorScreen), tu auras besoin d'un état pour savoir si tu es en train d'enregistrer, et d'un "lanceur" pour demander la permission au clic sur le bouton micro.
+Voici la logique à intégrer là où tu as ta barre d'outils :
+```kotlin
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+
+// À mettre au début de ton Composable RichTextNoteEditorScreen
+val context = LocalContext.current
+val enregistreur = remember { EnregistreurAudio(context) }
+var enEnregistrement by remember { mutableStateOf(false) }
+
+// Le gestionnaire de permission Android
+val permissionLauncher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.RequestPermission()
+) { estAccorde ->
+    if (estAccorde) {
+        // La permission est donnée, on démarre !
+        val chemin = enregistreur.demarrerEnregistrement()
+        if (chemin != null) {
+            enEnregistrement = true
+            // TODO: Tu devras stocker ce chemin temporairement
+        }
+    } else {
+        // Gérer le refus (ex: afficher un Toast)
+    }
+}
+
+// ... Plus loin, dans ta barre d'outils ...
+IconButton(
+    onClick = {
+        if (enEnregistrement) {
+            // ON ARRÊTE L'ENREGISTREMENT
+            enregistreur.arreterEnregistrement()
+            enEnregistrement = false
+            
+            // TODO: 1. Récupérer le contenu HTML actuel du bloc de texte
+            // TODO: 2. Ajouter le BlocNote.Audio(chemin) à ta liste de blocs
+            // TODO: 3. Ajouter un nouveau BlocNote.Texte("") vide à la suite
+            
+        } else {
+            // ON DEMANDE LA PERMISSION ET ON LANCE L'ENREGISTREMENT
+            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+) {
+    Icon(
+        // Change l'icône si ça enregistre
+        imageVector = if (enEnregistrement) Icons.Default.Stop else Icons.Default.Mic,
+        contentDescription = "Micro",
+        tint = if (enEnregistrement) Color.Red else MaterialTheme.colorScheme.primary
+    )
+}
+
+```
+Avec ces classes, ton application a la capacité matérielle de capturer la voix et de la restituer. La prochaine étape pour toi sera de relier cette logique au système de "Blocs" (Texte -> Audio -> Texte) dont nous avons parlé précédemment pour que l'interface se mette à jour au moment où l'enregistrement s'arrête.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Allons-y et qu'on en finisse.
+
+
+
+
+
+Allez, on boucle ça ! Voici la pièce finale du puzzle pour que ton application gère parfaitement l'alternance texte/audio.
+On va modifier ton écran d'édition principal (RichTextNoteEditorScreen) pour qu'il utilise une liste dynamique (LazyColumn). Chaque fois que l'utilisateur arrête de parler, on fige le texte précédent, on insère le lecteur audio, et on crée une nouvelle zone de texte vierge en dessous.
+Voici le code complet et définitif à intégrer.
+### 1. Le Modèle de Données (Les Blocs)
+Ajoute ceci en haut de ton fichier (ou dans un fichier de modèles séparé). C'est ce qui permet de différencier le texte de l'audio.
+```kotlin
+import java.util.UUID
+
+// La structure de tes blocs de contenu
+sealed class BlocNote {
+    val idBloc: String = UUID.randomUUID().toString() // Identifiant unique pour Compose
+    
+    // Le bloc de texte stocke son propre HTML
+    data class Texte(var contenuHtml: String = "") : BlocNote()
+    
+    // Le bloc audio stocke le chemin du fichier enregistré
+    data class Audio(val cheminFichier: String) : BlocNote()
+}
+
+```
+### 2. Le Composant pour un Bloc de Texte
+Pour que chaque zone de texte garde son propre style de façon indépendante, on crée un petit composant dédié qui met à jour le modèle à chaque frappe.
+```kotlin
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BlocTexteUI(
+    bloc: BlocNote.Texte,
+    onHtmlChange: (String) -> Unit
+) {
+    val state = rememberRichTextState()
+
+    // Charge le texte initial s'il y en a (utile pour l'édition d'anciennes notes)
+    LaunchedEffect(Unit) {
+        if (bloc.contenuHtml.isNotBlank() && state.toHtml() != bloc.contenuHtml) {
+            state.setHtml(bloc.contenuHtml)
+        }
+    }
+
+    // Écoute les changements d'état et remonte l'HTML
+    LaunchedEffect(state.annotatedString) {
+        onHtmlChange(state.toHtml())
+    }
+
+    RichTextEditor(
+        state = state,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 4.dp),
+        placeholder = { Text("Écrivez ici...", color = Color.Gray.copy(alpha = 0.5f)) },
+        colors = RichTextEditorDefaults.richTextEditorColors(
+            containerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        )
+    )
+}
+
+```
+### 3. L'Écran Complet (L'Assemblage Final)
+Voici comment remplacer ton RichTextNoteEditorScreen. C'est le cœur du réacteur : il gère la liste, la demande de permission et l'ajout séquentiel.
+```kotlin
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.LocalContext
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RichTextNoteEditorScreen(
+    titreInitial: String = "",
+    blocsInitiaux: List<BlocNote> = listOf(BlocNote.Texte("")), // On remplace le String HTML
+    titrePage: String = "Nouvelle note",
+    onRetour: () -> Unit,
+    onSauvegarde: (String, List<BlocNote>) -> Unit // On retourne la liste des blocs
+) {
+    var titre by remember { mutableStateOf(titreInitial) }
+    
+    // La liste qui contient notre séquence Texte -> Audio -> Texte
+    val blocs = remember { mutableStateListOf<BlocNote>().apply { addAll(blocsInitiaux) } }
+
+    // --- GESTION DE L'AUDIO ---
+    val context = LocalContext.current
+    val enregistreur = remember { EnregistreurAudio(context) }
+    var enEnregistrement by remember { mutableStateOf(false) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { estAccorde ->
+        if (estAccorde) {
+            val chemin = enregistreur.demarrerEnregistrement()
+            if (chemin != null) {
+                enEnregistrement = true
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(titrePage, fontSize = 16.sp, color = Color.Gray) },
+                navigationIcon = {
+                    IconButton(onClick = onRetour) {
+                        Icon(Icons.Default.Close, "Annuler")
+                    }
+                },
+                actions = {
+                    // SAUVEGARDE
+                    IconButton(onClick = {
+                        onSauvegarde(
+                            titre.ifBlank { "Note sans titre" },
+                            blocs.toList() // On envoie toute la liste
+                        )
+                    }) {
+                        Icon(Icons.Default.Check, "Sauvegarder", tint = MaterialTheme.colorScheme.primary)
+                    }
+                }
+            )
+        },
+        // Bouton Micro Flottant en bas à droite
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    if (enEnregistrement) {
+                        // 1. On arrête l'audio
+                        enregistreur.arreterEnregistrement()
+                        enEnregistrement = false
+                        
+                        // 2. On récupère le chemin du fichier (géré dans ta classe)
+                        // Note : modifie EnregistreurAudio pour récupérer le dernier chemin utilisé
+                        val cheminDernierFichier = enregistreur.obtenirDernierChemin() ?: return@FloatingActionButton
+                        
+                        // 3. On ajoute le bloc audio
+                        blocs.add(BlocNote.Audio(cheminFichier = cheminDernierFichier))
+                        
+                        // 4. On ajoute une nouvelle zone de texte vide en dessous
+                        blocs.add(BlocNote.Texte(""))
+                    } else {
+                        // Demande la permission et lance l'enregistrement
+                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
+                },
+                containerColor = if (enEnregistrement) Color.Red else MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = if (enEnregistrement) Icons.Default.Stop else Icons.Default.Mic,
+                    contentDescription = "Micro",
+                    tint = Color.White
+                )
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .imePadding()
+        ) {
+            
+            // TITRE
+            TextField(
+                value = titre,
+                onValueChange = { titre = it },
+                placeholder = { Text("Titre de la note", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.Gray.copy(alpha = 0.5f)) },
+                textStyle = LocalTextStyle.current.copy(fontSize = 28.sp, fontWeight = FontWeight.Bold),
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+            )
+
+            HorizontalDivider(color = Color.Gray.copy(alpha = 0.2f))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // AFFICHAGE SÉQUENTIEL DES BLOCS
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(blocs, key = { it.idBloc }) { bloc ->
+                    when (bloc) {
+                        is BlocNote.Texte -> {
+                            BlocTexteUI(
+                                bloc = bloc,
+                                onHtmlChange = { nouveauHtml ->
+                                    bloc.contenuHtml = nouveauHtml // Mise à jour instantanée
+                                }
+                            )
+                        }
+                        is BlocNote.Audio -> {
+                            LecteurAudioUI(cheminFichier = bloc.cheminFichier)
+                        }
+                    }
+                }
+                
+                // Espace vide à la fin pour éviter que le bouton flottant ne cache le texte
+                item { Spacer(modifier = Modifier.height(80.dp)) }
+            }
+        }
+    }
+}
+
+```
+*(Note technique : Assure-toi juste d'ajouter une petite méthode fun obtenirDernierChemin(): String? = cheminFichierActuel dans ta classe EnregistreurAudio que je t'ai fournie précédemment).*
+### La dernière étape dans ton MainActivity
+Dans tes callbacks onSauvegarde, tu vas maintenant recevoir un List<BlocNote> au lieu d'un simple String HTML. Pense bien à adapter la data class Note (comme montré dans mon message précédent) pour qu'elle sauvegarde la liste de blocs, et c'est terminé !

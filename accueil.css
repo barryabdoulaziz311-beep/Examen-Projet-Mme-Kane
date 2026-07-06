@@ -1,0 +1,356 @@
+/*Enlever les margin auto du navigateur*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /*background: #f8f7f5;*/
+    background: #E5E7EB;
+    color: #111;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background-color: #03152A;
+    padding: 8px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding-right: 3px;
+    flex-direction: column;
+}
+
+.barre-haute {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #03152A;
+    padding: 8px;
+}
+
+.zone-marque {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-right: 10px;
+    align-self: center;
+}
+
+.nom-marque {
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1.3px;
+}
+
+.zone-marque img {
+    width: 50px;
+    height: 50px;
+    font-weight: 300;
+    object-fit: cover;
+    background-position: center;
+    border: 2px solid #50e117;
+    border-radius: 50%;
+}
+
+.zone-marque img:hover {
+    transform: scale(1.1);
+    transition: all 0.3s;
+}
+
+
+.nav {
+    width: 100%;
+    gap: 30px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #50e117;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; /*daye masque la scrollbar sur Firefox */
+    -ms-overflow-style: none; /*daye masque la scrollbar sur IE/Edge */
+    display: flex;
+}
+
+.nav a {
+    color: white;
+    flex-shrink: 0; /*Pour bu éléments yi ndaw/wagnéku*/
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 6px 12px;
+}
+
+.nav a:hover {
+    color: #50e117;
+}
+
+.nav a.actif {
+    color: #50e117;
+    border-bottom: 3px solid #50e117;
+    padding-bottom: 4px;
+    transition: all 0.2s;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+button {
+    border: none;
+    background: #50e117;
+    padding: 6px;
+    left: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 15px;
+    border-radius: 15px;
+    color: #03152A;
+    cursor: pointer;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    align-self: center;
+}
+
+button:hover {
+    background: rgba(0, 128, 0, 2);
+}
+
+
+main {
+    display: flex;
+    flex: 1;
+    background-image: url("icones/23.webp");
+    width: 100%;
+    min-height: 100px;
+    backdrop-filter: blur(35px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex-direction: column;
+    color: white;
+    /*margin-top: 2px;*/ /*Pour éviter que le header ne cache une partie du main, il faudra ajuster la taille pour s'assurer que le contenu ne se retrouve pas sous le header*/
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* centre horizontalement */
+    justify-content: center; /* centre verticalement si tu veux */
+    text-align: center;
+    gap: 20px; /* espace entre h1, p et bouton */
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+}
+
+.hero p {
+    font-size: 1rem;
+    font-family: "Montserrat", sans-serif;
+}
+
+.cta-button {
+    display: inline-block;
+    background: #50e117;
+    color: #03152A;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.cta-button:hover {
+    background: #3bb010;
+}
+
+
+.services {
+    text-align: center;
+    margin: 40px 0 20px;
+}
+
+.services h2 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 2.3rem;
+    font-weight: bold;
+}
+
+.services .sous-titre {
+    font-weight: bold;
+    border-radius: 50px;
+    border-left: 3px solid #020f1f;
+    border-right: 3px solid #020f1f;
+}
+
+.service-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 20px;
+    margin-bottom: 12px;
+}
+
+.service-elem {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+    width: 70%;
+    min-height: 170px;
+    background: #020f1f;
+    border-radius: 25px;
+    border-left: 5px solid #f8f7f5;
+    transition: transform 0.3s ease;
+}
+
+.service-elem:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s;
+}
+
+.service-elem img {
+    margin-left: 8px;
+    width: 45px;
+    height: 45px;
+}
+
+.info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.service-elem .info-grid h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.service-elem .info-grid p {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.9rem;
+}
+
+.service-elem a {
+    font-weight: bold;
+    color: #0359F1;
+    text-decoration: none;
+}
+
+.service-elem a:hover {
+    text-decoration: underline;
+}
+
+
+
+footer {
+    display: flex;
+    flex-direction: row;
+    background: #03152A;
+    width: 100%;
+    min-height: 50px;
+    align-items: center;
+    padding: 10px;
+}
+
+.contact-sect {
+    display: flex;
+    gap: 10px;
+}
+
+.contact-sect img {
+    cursor: pointer;
+}
+
+footer .zone-marque .nom-marque {
+    color: #03152A;
+}
+
+
+
+
+@media (min-width: 768px) {
+
+    header {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .zone-marque {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-shrink: 0;
+        border-right: 2px solid white;
+        padding: 5px;
+    }
+
+    .zone-marque .logo {
+        width: 50px;
+        height: 50px;
+    }
+
+    .zone-marque .nom-marque {
+        font-family: "Montserrat", sans-serif;
+        font-size: 20px;
+    }
+
+    .nav {
+        flex: 1; /*Très IMPORTANT fii-ni pour naviguer ici, il occupe tout l'espace restant*/
+        display: flex;
+        border-bottom: none;
+    }
+
+    .nav::-webkit-scrollbar {
+        display: none;           /* masque la scrollbar sur Chrome/Safari */
+    }
+
+    .nav a {
+        font-family: "Montserrat", sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .btn-connexion {
+        flex-shrink: 0;
+    }
+
+    
+    main {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .services {
+        display: grid;
+        gap: 20px;
+    }
+
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .service-elem .info-grid {
+        display: grid;
+        gap: 16px;
+        margin: 15px;
+    }
+
+    .service-elem {
+        width: auto;
+        gap: 10px;
+    }
+
+}

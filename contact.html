@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="contact.css">
+    <title>UCAB / Accueil</title>
+</head>
+<body>
+    <header>
+
+        <div class="zone-marque">
+            <span><img class="logo" src="icones/icone_profil_ucab2.jpeg" alt="logo"></span>
+            <h1 class="nom-marque">Site UCAB</h1>
+        </div>
+
+        <div class="nav">
+            <a href="index.html">Accueil</a>
+            <a href="service.html">Services</a>
+            <a href="apropos.html">À propos</a>
+            <a href="contact.html" class="actif">Contact</a>
+            <a href="connexion.html">Connexion</a>
+        </div>
+
+        <button class="btn-connexion">Connexion</button>
+
+    </header>
+
+
+    <main>
+        <section class="titre">
+            <h1>Contactez-nous</h1>
+            <p>Une question ou un projet ? Ecrivez-nous, nous vous répondrons rapidement</p>
+        </section>
+
+
+        <div class="formulaire">
+            <section class="form">
+                <h3 style="color: rgb(44, 36, 36); margin-bottom: 13px;">Envoyez-nous un message</h3>
+
+                <form method="post" action="">
+                    <input type="text" name="text" value="" placeholder="Nom complet" required>
+
+                    <input type="email" name="email" value="" placeholder="Votre email" required>
+
+                    <textarea rows="7" cols="7" id="message" name="message" placeholder="Ecrivez votre message ici..." required></textarea>
+                    
+                    <button class="btn-submit" type="submit">
+                        Envoyez le message
+                    </button>
+                </form>
+            </section>
+
+            <section class="affichage">
+                <h3 style="color: black; margin-bottom: 13px;">Nos coordonnées</h3>
+
+                <div class="option">
+                    <img src="icones/pin.png" alt="loc">
+
+                    <div class="coord">
+                        <h5>Adresse</h5>
+                        <small>123 Rue Sacrée Coeur Dakar, Sénégal</small>
+                    </div>
+                </div>
+
+                <div class="option">
+                    <img src="icones/email.png" alt="email">
+
+                    <div class="coord">
+                        <h5>Email</h5>
+                        <small>aab@example.sn.com</small>
+                    </div>
+                </div>
+
+                <div class="option">
+                    <img src="icones/appel-telephonique.png" alt="loc">
+
+                    <div class="coord">
+                        <h5>Téléphone</h5>
+                        <small>+221 123 45 67</small>
+                    </div>
+                </div>
+
+                <div class="option">
+                    <img src="icones/clock.png" alt="horraire">
+
+                    <div class="coord">
+                        <h5>Horaire</h5>
+                        <small>Lun • Ven : 8h00 • 18h00</small>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+    
+
+    <footer>
+        <div class="contact-sect" style="flex: 1;">
+            <span class="tel"><img src="icones/appel2_b.png" alt="tel" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/communication.png" alt="email" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/social.png" alt="whatsapp" style="width: 20px; height:20px;"></span>
+        </div>
+
+        <div class="contact-sect">
+            <span class="tel"><img src="icones/instagram (2).png" alt="insta" style="width: 18px; height:18px;"></span>
+            <span class="tel"><img src="icones/telegram (1).png" alt="telegram" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/facebook.png" alt="facebook" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/whatsapp (3).png" alt="whatsapp" style="width: 22px; height:22px;"></span>
+        </div>
+    </footer>
+</body>
+</html>

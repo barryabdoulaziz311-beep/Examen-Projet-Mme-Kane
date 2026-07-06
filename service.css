@@ -1,0 +1,354 @@
+/*Enlever les margin auto du navigateur*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /*background: #f8f7f5;*/
+    background: #E5E7EB;
+    color: #111;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background-color: #03152A;
+    padding: 8px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding-right: 3px;
+    flex-direction: column;
+}
+
+.barre-haute {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #03152A;
+    padding: 8px;
+}
+
+.zone-marque {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-right: 10px;
+    align-self: center;
+}
+
+.nom-marque {
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1.3px;
+}
+
+.zone-marque img {
+    width: 50px;
+    height: 50px;
+    font-weight: 300;
+    object-fit: cover;
+    background-position: center;
+    border: 2px solid #50e117;
+    border-radius: 50%;
+}
+
+.zone-marque img:hover {
+    transform: scale(1.1);
+    transition: all 0.3s;
+}
+
+
+.nav {
+    width: 100%;
+    gap: 30px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #50e117;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; /*daye masque la scrollbar sur Firefox */
+    -ms-overflow-style: none; /*daye masque la scrollbar sur IE/Edge */
+    display: flex;
+}
+
+.nav a {
+    color: white;
+    flex-shrink: 0; /*Pour bu éléments yi ndaw/wagnéku*/
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 6px 12px;
+}
+
+.nav a:hover {
+    color: #50e117;
+}
+
+.nav a.actif {
+    color: #50e117;
+    border-bottom: 3px solid #50e117;
+    padding-bottom: 4px;
+    transition: all 0.2s;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+button {
+    border: none;
+    background: #50e117;
+    padding: 6px;
+    left: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 15px;
+    border-radius: 15px;
+    color: #03152A;
+    cursor: pointer;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    align-self: center;
+}
+
+button:hover {
+    background: rgba(0, 128, 0, 2);
+}
+
+
+
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-top: 200px;
+    gap: 20px;
+}
+
+.services {
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.titre {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.titre h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #0b1a2f;
+    margin-bottom: 1.2rem;
+    line-height: 1.1;
+    text-shadow: 0 2px 5px rgba(212, 175, 55, 0.3),
+                    3px 3px 0 rgba(11, 26, 47, 0.08); /* Effet d'ombre*/
+    position: relative;
+    display: inline-block;
+    align-self: center;
+}
+
+
+p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 0.8rem;
+    line-height: 1;
+    color: #1e2e3f;
+    max-width: 300px;
+    margin: 1.5rem auto 0.5rem;
+    background: rgba(212, 175, 55, 0.05);
+    padding: 0.8rem 1.8rem;
+    border-radius: 60px;
+    border-left: 5px solid #03152A; /*bordure à gauche*/
+    border-right: 5px solid #03152A; /*bordure à droite*/
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); /*ombre*/
+}
+
+
+.carte {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px); /*Floue*/
+    -webkit-backdrop-filter: blur(12px); /*pour ay navidateur comme Safari aussi (pour qu'un grand nb de navig soient pris en charge/concernées*/
+    padding: 1rem 2rem;
+    border-radius: 32px;
+    gap: 16px;
+    /*Ajouter une ombre*/
+    box-shadow: 0 25px 45px -10px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    border-left: 8px solid #03152A;
+    transition: transform 0.3s ease;
+}
+
+.carte:hover {
+    transform: translateY(-5px);
+    /*box-shadow: 0 30px 55px -8px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(212, 175, 55, 0.5);*/
+    box-shadow: 0 30px 55px -8px rgba(8, 193, 21, 0.5); /*Ajoute une ombre*/
+}
+
+.carte h3 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.carte img {
+    width: 50px;
+    height: 50px;
+}
+
+.carte a {
+    font-size: 1rem;
+    color: blue;
+
+}
+
+
+
+
+footer {
+    display: flex;
+    flex-direction: row;
+    background: #03152A;
+    width: 100%;
+    min-height: 50px;
+    align-items: center;
+    padding: 10px;
+}
+
+.contact-sect {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.contact-sect img {
+    cursor: pointer;
+    display: inline-block;
+}
+
+
+
+@media (min-width : 768px) {
+
+    header {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .zone-marque {
+        display: flex;
+        border-right: 2px solid white;
+        align-items: center;
+        gap: 20px;
+        flex-shrink: 0;
+    }
+
+    .zone-marque img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .zone-marque .nom-marque {
+        font-family: "Montserrat", sans-serif;
+        font-size: 20px;
+    }
+
+    .nav {
+        flex: 1; /*Très IMPORTANT pour naviguer ici, il occupe tout l'espace restant*/
+        display: flex;
+        flex-direction: row;
+        border-bottom: none;
+    }
+
+    .nav a {
+        font-family: "Montserrat", sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .btn-connexion {
+        flex-shrink: 0; /* le bouton reste visible à droite */
+    }
+
+   
+
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        margin-top: 90px;
+        gap: 20px;
+    }
+
+    .services {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
+        gap: 30px;
+        padding: 0 40px;
+    }
+
+    .titre p {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: #1e2e3f;
+        max-width: 300px;
+        margin: 1.5rem auto 0.5rem;
+        background: rgba(212, 175, 55, 0.05);
+        padding: 1.8rem 2.8rem;
+        border-radius: 60px;
+        border-left: 5px solid #50e117; /*bordure à gauche*/
+        border-right: 5px solid #50e117; /*bordure à droite / #03152A*/
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05); /*ombre*/
+    }
+
+    .carte {
+        display: flex;
+        flex-direction: column;
+        width: auto;
+        border-radius: 35px;
+        
+    }
+
+    .carte img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .carte h3 {
+        font-size: 1.2rem;
+    }
+
+    .carte a {
+        font-size: 1.2rem;
+    }
+
+}

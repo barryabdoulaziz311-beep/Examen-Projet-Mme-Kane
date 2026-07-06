@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="connexion.css">
+    <title>UCAB / Accueil</title>
+</head>
+<body>
+    <header>
+
+        <div class="zone-marque">
+            <span><img class="logo" src="icones/icone_profil_ucab2.jpeg" alt="logo"></span>
+            <h1 class="nom-marque">Site UCAB</h1>
+        </div>
+
+        <div class="nav">
+            <a href="index.html">Accueil</a>
+            <a href="service.html">Services</a>
+            <a href="apropos.html">À propos</a>
+            <a href="contact.html">Contact</a>
+            <a href="connexion.html" class="actif">Connexion</a>
+        </div>
+
+        <button class="btn-connexion">Connexion</button>
+
+    </header>
+
+
+    <main>
+        <section class="titre">
+            <h1>Connexion</h1>
+            <p>Connectez-vous à votre compte pour accèder votre espace</p>
+        </section>
+
+
+        <div class="formulaire">
+            <section class="form">
+                <form method="post" action="">
+                    <label for="">
+                        Email
+                        <input type="email" name="email" value="" required>
+                    </label>
+
+                    <label for="">
+                        Mot de passe
+                        <input type="password" name="motPasse" value="" required>
+                    </label>
+
+                    <div class="mdp_oublie">
+                        <input type="checkbox" id="check" name="check" required style="width: auto; margin: 0;">
+                        <label for="" style="display: inline; margin: 0; flex: 1;">
+                            Se souvenir de moi
+                        </label>
+
+                        <p><a href="#">Mot de passe oublié ?</a></p>
+                    </div>
+
+                    <button class="btn-submit" type="submit">
+                        Se connecter
+                    </button>
+                </form>
+
+                <p class="connexion">
+                    Pas encore connecté ? <a href="#">S'inscrire</a>
+                </p>
+            </section>
+
+            <section class="affichage" style="background-image: url('icones/OIP.webp');
+                background-size: cover;
+                background-position: center;
+                min-width: 450px; min-height: 330px; flex-grow: 0;"
+            >
+            </section>
+
+        </div>
+    </main>
+    
+
+    <footer>
+        <div class="contact-sect" style="flex: 1;">
+            <span class="tel"><img src="icones/appel2_b.png" alt="tel" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/communication.png" alt="email" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/social.png" alt="whatsapp" style="width: 20px; height:20px;"></span>
+        </div>
+
+        <div class="contact-sect">
+            <span class="tel"><img src="icones/instagram (2).png" alt="insta" style="width: 18px; height:18px;"></span>
+            <span class="tel"><img src="icones/telegram (1).png" alt="telegram" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/facebook.png" alt="facebook" style="width: 20px; height:20px;"></span>
+            <span class="tel"><img src="icones/whatsapp (3).png" alt="whatsapp" style="width: 22px; height:22px;"></span>
+        </div>
+    </footer>
+</body>
+</html>
