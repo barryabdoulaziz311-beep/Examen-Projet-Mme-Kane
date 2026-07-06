@@ -130,7 +130,6 @@ main {
     flex-direction: column;
     width: 100%;
     gap: 100px;
-    margin-top: 180px;
 }
 
 .sect-1 {
@@ -226,12 +225,13 @@ main {
 section.ressources {
     display: flex;
     flex-direction: column;
+    margin-right: auto;
     gap: 20px;
     width: 70%;
 }
 
 .ressources-titre {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     align-self: center;
     font-weight: bold;
 }
@@ -241,12 +241,13 @@ section.ressources {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+    gap: 20px;
 }
 
 .tech .tech-art {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 5px;
