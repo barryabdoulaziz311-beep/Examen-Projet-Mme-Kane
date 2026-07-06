@@ -131,7 +131,6 @@ main {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    margin-top: 200px;
     gap: 20px;
 }
 
