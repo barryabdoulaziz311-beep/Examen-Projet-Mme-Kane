@@ -151,7 +151,7 @@ section {
     /*text-align: center;*/
     border-left: 8px solid #03152A;
     transition: transform 0.3s ease;
-    margin: 0 20px 20px 0;
+    margin: 10px 10px 20px 10px;
 }
 
 section h2 {
