@@ -152,6 +152,7 @@ section {
     border-left: 8px solid #03152A;
     transition: transform 0.3s ease;
     margin-bottom: 20px;
+    margin-right : 20px;
 }
 
 section h2 {
@@ -359,6 +360,10 @@ footer .zone-marque .nom-marque {
     .formulaire .affichage {
         flex: 1;
         min-width: 250px;
+    }
+
+    section {
+        margin-right: 0;
     }
 
     .affichage {
