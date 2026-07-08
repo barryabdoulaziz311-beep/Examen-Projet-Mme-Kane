@@ -212,6 +212,7 @@ label {
     width: 100%;
     display: block;
     transition: all 0.3s;
+    margin-right: auto;
 }
 .btn-submit:hover {
     background-color: #033194;
