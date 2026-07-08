@@ -209,10 +209,9 @@ label {
     background: #1158e6;
     color: white;
     border-radius: 8px;
-    width: 100%;
+    width: 80%;
     display: block;
     transition: all 0.3s;
-    margin-right: auto;
 }
 .btn-submit:hover {
     background-color: #033194;
