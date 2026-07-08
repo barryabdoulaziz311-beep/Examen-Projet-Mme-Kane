@@ -152,7 +152,7 @@ section {
     border-left: 8px solid #03152A;
     transition: transform 0.3s ease;
     margin-bottom: 20px;
-    margin-right : 20px;
+    margin-right : 0;
 }
 
 section h2 {
@@ -363,7 +363,7 @@ footer .zone-marque .nom-marque {
     }
 
     section {
-        margin-right: 0;
+        margin-right: 20px;
     }
 
     .affichage {
